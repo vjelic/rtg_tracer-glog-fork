@@ -12,58 +12,10 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "glog-e3a5b369-5ef2-4ae3-89fd-cad7a29f4d21",
+              "id": "2fe5f357-7b6d-3ed6-9f3d-66ea1e135d6e",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe vulnerability in question is related to the `memcpy` function in C++. This function is used to copy a block of memory from one location to another. The vulnerability arises when the size of the destination buffer is less than the size of the source buffer. This can lead to buffer overflow, which can cause the program to crash or, in worst-case scenarios, allow an attacker to execute arbitrary code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always ensure that the destination buffer is large enough to hold the data being copied from the source buffer. This can be done by checking the size of the destination buffer before calling `memcpy`.\n\nAdditionally, consider using safer alternatives to `memcpy` such as `strncpy` or `memcpy_s` (in C11), which take the size of the destination buffer as an argument and ensure that no buffer overflow occurs.\n\n## Source Code Fix Recommendation\n\nIn the provided code snippet, it is assumed that `gs_OrigCoreApiTable` and `pTable->core_` are of type `CoreApiTable`. If that's the case, the `memcpy` function is safe as it is, because `sizeof(CoreApiTable)` will not exceed the size of the destination buffer.\n\nHowever, if `gs_OrigCoreApiTable` and `pTable->core_` are not of type `CoreApiTable`, you should ensure that the destination buffer is large enough before calling `memcpy`. Here is an example of how you can do this:\n\n```cpp\nif(sizeof(gs_OrigCoreApiTable) >= sizeof(pTable->core_)) {\n    memcpy(static_cast<void*>(&gs_OrigCoreApiTable),\n           static_cast<const void*>(pTable->core_),\n           sizeof(CoreApiTable));\n} else {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code example.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active at the time of writing this report."
-              },
-              "properties": {
-                "tags": [
-                  "DS121708"
-                ]
-              }
-            },
-            {
-              "id": "glog-b5430737-c9d3-4623-8d68-66a00cb254cf",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function does not check the size of the destination buffer, which can lead to buffer overflow if the source is larger than the destination. This is a common vulnerability in C++ programming that can lead to serious security issues such as code execution, denial of service, or information disclosure.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use functions that check the size of the destination buffer such as `strncpy` or `memcpy_s` (in C11). Also, always ensure that the destination buffer is large enough to hold the data being copied.\n\n## Source Code Fix Recommendation\n\nReplace the `memcpy` function with `memcpy_s` function which checks the size of the destination buffer:\n\n```cpp\nerrno_t err = memcpy_s(static_cast<void*>(pTable->core_),\n           sizeof(CoreApiTable),\n           static_cast<const void*>(&gs_OrigCoreApiTable),\n           sizeof(CoreApiTable));\nif (err)\n{\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstring>`: This library is required for the `memcpy` function.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n## Common Weakness Enumeration (CWE)\n\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS121708"
-                ]
-              }
-            },
-            {
-              "id": "glog-fa986b7c-0949-46cb-ace6-b4b7ff96ec0d",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe vulnerability in question is related to the `memcpy` function in C++. This function is used to copy a block of memory from one location to another. The vulnerability arises when the size of the destination buffer is less than the size of the source buffer. This can lead to a buffer overflow, which can cause the program to crash or, in some cases, allow an attacker to execute arbitrary code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code:\n\n```cpp\nif (sizeof(gs_OrigExtApiTable) >= sizeof(AmdExtTable)) {\n    memcpy(static_cast<void*>(&gs_OrigExtApiTable),\n           static_cast<const void*>(pTable->amd_ext_),\n           sizeof(AmdExtTable));\n} else {\n    // Handle error\n}\n```\n\nIn this version, we first check if the size of `gs_OrigExtApiTable` is greater than or equal to the size of `AmdExtTable`. If it is, we proceed with the `memcpy`. If not, we handle the error in a way that is appropriate for the specific program.\n\n## Library Dependencies\n\nThe code example requires the following library to execute properly:\n\n- `<cstring>`: This library provides the `memcpy` function.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are valid and active at the time of writing."
-              },
-              "properties": {
-                "tags": [
-                  "DS121708"
-                ]
-              }
-            },
-            {
-              "id": "glog-21c076fc-d19f-4994-9585-a6e004612fd5",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe vulnerability in question is related to the `memcpy` function in C++. This function is used to copy a block of memory from one location to another. The vulnerability arises when the size of the destination buffer is less than the size of the source buffer. This can lead to buffer overflow, which can cause the program to crash or, in worst-case scenarios, allow an attacker to execute arbitrary code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always ensure that the destination buffer is large enough to hold the data being copied from the source buffer. This can be done by checking the size of the destination buffer before calling `memcpy`.\n\nAdditionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflow.\n\n## Source Code Fix Recommendation\n\nIn the provided code snippet, the size of the destination buffer `pTable->amd_ext_` should be checked before calling `memcpy`. If the size of `gs_OrigExtApiTable` is greater than the size of `pTable->amd_ext_`, then `memcpy` should not be called.\n\n```cpp\nif (sizeof(pTable->amd_ext_) >= sizeof(gs_OrigExtApiTable)) {\n    memcpy(static_cast<void*>(pTable->amd_ext_),\n           static_cast<const void*>(&gs_OrigExtApiTable),\n           sizeof(AmdExtTable));\n} else {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe code example provided does not appear to require any specific library dependencies beyond the standard C++ libraries.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible at all times."
-              },
-              "properties": {
-                "tags": [
-                  "DS121708"
-                ]
-              }
-            },
-            {
-              "id": "glog-3584508d-75d4-497b-bbf8-efaa8239a840",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe `strncpy` function in C++ is considered unsafe because it does not guarantee that a null character will be appended at the end of the destination string. This can lead to buffer overflow vulnerabilities if the source string is longer than the destination buffer. In the provided code snippet, `strncpy(row.completionSignal, \"\", 18)`, the function is trying to copy an empty string into `row.completionSignal` with a maximum of 18 characters. This can lead to undefined behavior if `row.completionSignal` is not large enough to hold 18 characters.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer string handling functions that ensure null-termination, such as `strlcpy` or `snprintf`. If `strncpy` must be used, ensure that the destination string is properly null-terminated.\n\n## Source Code Fix Recommendation\n\nHere is a safer alternative using `snprintf`:\n\n```cpp\nsnprintf(row.completionSignal, sizeof(row.completionSignal), \"%s\", \"\");\n```\n\nThis will ensure that `row.completionSignal` is null-terminated.\n\n## Library Dependencies\n\nThe `strncpy` function is part of the C standard library (`<cstring>` in C++), and `snprintf` is part of the C standard I/O library (`<cstdio>` in C++).\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+                "markdown": "This finding is classified as a genuine vulnerability because the code performs a string copy operation to a destination buffer without any prior check to ensure that the destination pointer is not null. The source is an empty string literal, which is always valid, but the destination may be null, as there is no evidence of a guard or check before the operation. This can lead to undefined behavior if the destination pointer is null at runtime. The risk is not mitigated by any explicit null check or guard in the surrounding code, and the analysis did not find any assignment of the count from the destination's capacity, which could otherwise indicate a safer usage pattern.\n\n## In Context Remediation\nBefore calling the string copy operation, ensure that the destination pointer is not null. This prevents undefined behavior due to null pointer dereference. For example:\n\n```cpp\nif (row.completionSignal != nullptr) {\n    strncpy(row.completionSignal, \"\", 18);\n}\n```\n\nAlternatively, if the destination is always expected to be valid, add an assertion to catch programming errors early:\n\n```cpp\nassert(row.completionSignal != nullptr);\nstrncpy(row.completionSignal, \"\", 18);\n```\n\n## References\n- [CWE-476: NULL Pointer Dereference](https://cwe.mitre.org/data/definitions/476.html)\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -72,10 +24,22 @@
               }
             },
             {
-              "id": "glog-64cdca36-20d8-4d58-aae4-48a53f791c9a",
+              "id": "339dc93b-22b6-38bb-a441-641574054645",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `strncpy` function in C++ is considered unsafe because it does not guarantee that a null character will be appended at the end of the destination string. This can lead to buffer overflow vulnerabilities if the source string is longer than the destination buffer. In the provided code snippet, `strncpy(row.completionSignal, \"\", 18)`, the function is trying to copy an empty string into `row.completionSignal` with a maximum of 18 characters. This can lead to undefined behavior if `row.completionSignal` is not large enough to hold 18 characters.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer string handling functions that ensure null-termination, such as `strlcpy` or `snprintf`. If `strncpy` must be used, ensure that the destination string is properly null-terminated.\n\n## Source Code Fix Recommendation\n\nHere is a safer alternative using `snprintf`:\n\n```cpp\nsnprintf(row.completionSignal, sizeof(row.completionSignal), \"%s\", \"\");\n```\n\nThis will ensure that `row.completionSignal` is null-terminated.\n\n## Library Dependencies\n\nThe `strncpy` function is part of the C standard library (`<cstring>` in C++), and `snprintf` is part of the C standard I/O library (`<cstdio>` in C++).\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure C library functions in C++ code. These functions are often prone to buffer overflow attacks, format string vulnerabilities, or integer overflows. In this case, the `atoi()` function is used, which can lead to integer overflow if the input string represents a number larger than `INT_MAX`.\n\n## Mitigation Advice\n\nAvoid using C library functions that do not perform bounds checking or input validation. Instead, use safer alternatives provided by the C++ Standard Library. For instance, instead of `atoi()`, you can use `std::stoi()` which throws an exception if the conversion fails or if the converted value is out of range.\n\n## Source Code Fix Recommendation\n\nReplace the `atoi()` function with `std::stoi()`. Here is the corrected code:\n\n```cpp\ntry {\n    index = std::stoi(strIndex);\n} catch (std::invalid_argument& e) {\n    // Handle exception: input string does not represent a valid number\n} catch (std::out_of_range& e) {\n    // Handle exception: converted value would fall out of the range of the result type\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n```cpp\n#include <string>\n```\n\n## References\n\n- [CWE-681: Incorrect Conversion between Numeric Types](https://cwe.mitre.org/data/definitions/681.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "dd5dbf07-c85d-347c-8113-a4aea44cde2a",
+              "help": {
+                "text": "",
+                "markdown": "This finding is considered a genuine vulnerability because the code performs a string copy operation to a destination buffer without any prior check to ensure that the destination pointer is not null. If the destination pointer is null at runtime, this will result in undefined behavior, potentially causing a crash or other unpredictable behavior. The source is an empty string literal, which is always valid, but the risk comes from the possibility that the destination pointer is null. There is no evidence of a guard or check for the destination pointer before the operation, and the analysis did not detect any assignment of the count from the buffer's capacity, which could indicate additional safety measures. Therefore, this is a real risk that should be addressed.\n\n## In Context Remediation\nBefore performing the string copy operation, ensure that the destination buffer pointer is not null. This prevents undefined behavior if the pointer is invalid. For example, add a check before the call:\n\n```cpp\nif (row.completionSignal != nullptr) {\n    strncpy(row.completionSignal, \"\", 18);\n}\n```\nIf `row.completionSignal` is not expected to be null by design, consider adding an assertion or error handling to catch programming errors early:\n\n```cpp\nassert(row.completionSignal != nullptr);\nstrncpy(row.completionSignal, \"\", 18);\n```\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-476: NULL Pointer Dereference](https://cwe.mitre.org/data/definitions/476.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -84,14 +48,158 @@
               }
             },
             {
-              "id": "glog-b48f06b5-1c65-4c50-aa4d-700e9ad5d7cc",
+              "id": "955b70d2-da4d-3915-b02d-4b8dbfc5e964",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `strlen()` function in C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen()` will continue reading memory until it encounters a null character, which can lead to buffer overflows, memory corruption, and other unexpected behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. Avoid using `strlen()` on strings that may not be null-terminated. Instead, consider using safer alternatives that limit the number of characters read, such as `strnlen()`. \n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```cpp\n#include <cstring>\n\nchar value_[100];\n// ... populate value_ ...\nsize_t len = strlen(value_);\n```\n\nUse:\n\n```cpp\n#include <cstring>\n\nchar value_[100];\n// ... populate value_ ...\nsize_t len = strnlen(value_, sizeof(value_));\n```\n\nIn the fixed code, `strnlen()` will stop reading after 100 characters, even if it doesn't encounter a null character. This prevents it from reading past the end of the array.\n\n## Library Dependencies\n\nThe code example requires the `<cstring>` library.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" is a vulnerability that arises when a C++ program uses a function that is considered unsafe or prohibited due to its potential to cause harm. In this case, the `fopen` function is used, which can lead to vulnerabilities such as arbitrary file overwrite, file disclosure, or denial of service if the filename is not properly validated.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to `fopen` such as `fopen_s` or `fstream`. These functions provide better error handling and are less prone to vulnerabilities. Additionally, always validate and sanitize user input to prevent malicious manipulation.\n\n## Source Code Fix Recommendation\n\nReplace the `fopen` function with `fstream`. Here is the fixed code:\n\n```cpp\n#include <fstream>\n\nstd::ofstream stream;\nstream.open(filename_with_tid.c_str());\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<fstream>`\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)\n\nPlease note that the links provided are active and accessible to anonymous users."
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "bd605a99-63fa-3158-a494-038ddb6a732f",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure C library functions in C++ code. These functions are often prone to buffer overflow attacks, format string vulnerabilities, or other types of security issues. In the provided code snippet, the `fopen` function is used, which can lead to vulnerabilities if the file name is manipulated by an attacker.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to these functions. In the case of `fopen`, consider using C++ file I/O operations instead. Always validate and sanitize inputs to these functions to prevent any potential security issues.\n\n## Source Code Fix Recommendation\n\nReplace the `fopen` function with C++ file I/O operations. Here is a fixed version of the code:\n\n```cpp\n#include <fstream>\n\nstd::ofstream gs_stream(outname.c_str());\nif (!gs_stream) {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<fstream>`\n\n## References\n\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)\n\nPlease note that the links provided are active and accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "09bc0258-ed3e-3ac2-8aeb-bd14ccce0b97",
+              "help": {
+                "text": "",
+                "markdown": "This finding is classified as a genuine vulnerability because it is marked as a 'UB Risk' (undefined behavior risk) due to possible overlap between the source and destination memory regions in a memory copy operation. The analysis detected that the destination and source may overlap based on data flow, which can lead to undefined behavior when using functions like memcpy. There is no evidence of explicit checks or guards to prevent this overlap, and the source may also be null, which further increases the risk. The destination is not a pointer-based member, suggesting it is likely a local or field array, but this does not mitigate the overlap risk. The probability of this being a false positive is low, as the overlap was determined via data flow analysis and the call is explicitly marked as 'GENUINE'.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory where the source and destination regions may overlap, use `memmove` instead of `memcpy`. `memmove` is specifically designed to handle overlapping memory regions safely. Replace the original call with:\n\n```cpp\nmemmove(static_cast<void*>(pTable->core_), static_cast<const void*>(&gs_OrigCoreApiTable), sizeof(CoreApiTable));\n```\n\nThis change ensures that the copy operation is safe even if the source and destination memory regions overlap.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "4f5d7032-13c7-3697-8516-9f136d0e255b",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ programming language refers to the use of certain C standard library functions that are known to be dangerous due to their potential to cause buffer overflows, format string vulnerabilities, or other problems. These functions are often prohibited in secure coding standards. One such function is `fprintf`.\n\nThe `fprintf` function can lead to vulnerabilities if not used correctly. It can cause format string vulnerabilities if the format string is not a constant, or if it's composed dynamically, it can lead to buffer overflows if the output is larger than the buffer.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to `fprintf` such as `snprintf` or `vsnprintf`. These functions include the size of the buffer as an argument, which can prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nInstead of using `fprintf`, use `snprintf` or `vsnprintf`. Here is an example:\n\n```cpp\n#include <stdio.h>\n\nvoid safe_function(const char* format, ...) {\n    char buffer[1024];\n    va_list args;\n    va_start(args, format);\n    vsnprintf(buffer, sizeof(buffer), format, args);\n    va_end(args);\n    // Now buffer contains the formatted string.\n    // You can write it to file with fwrite or similar\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n- stdio.h\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n\n## CWE\n\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "2bec8f8b-0844-3edb-8e48-8797c81cb5c7",
+              "help": {
+                "text": "",
+                "markdown": "This finding is classified as a genuine vulnerability because it is marked as a high-confidence undefined behavior risk due to possible overlap between the source and destination memory regions in a memory copy operation. The analysis detected that the destination and source may refer to overlapping memory areas based on data flow analysis, which can lead to undefined behavior when using functions like memcpy. There are no explicit checks or guards in the code to prevent this overlap, and the source may also be null, which further increases the risk. The destination is not a pointer-based member, suggesting it is likely a local or field array, but this does not mitigate the overlap risk. The probability of this being a false positive is low, as the overlap was determined through data flow analysis and there are no mitigating signals such as guards or capacity checks.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory where the source and destination may overlap, use `memmove` instead of `memcpy`. `memmove` is specifically designed to handle overlapping memory regions safely. Replace the original call with `memmove`:\n\n```cpp\nmemmove(static_cast<void*>(pTable->amd_ext_), static_cast<const void*>(&gs_OrigExtApiTable), sizeof(AmdExtTable));\n```\n\nThis change ensures that the copy operation is safe even if the source and destination memory regions overlap.\n\n## References\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n\n\n___\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "59a7d5fa-45f7-3370-a50f-c9610669cbc1",
+              "help": {
+                "text": "",
+                "markdown": "This finding is classified as a genuine vulnerability because the static analysis tool has detected a possible risk of undefined behavior due to overlapping memory regions in a memory copy operation. The code copies data from one memory location to another using a memory copy function, but dataflow analysis suggests that the source and destination may overlap. This can lead to unpredictable results or program crashes, as the standard memory copy function does not guarantee correct behavior when source and destination regions overlap. Additionally, there is no evidence of explicit checks or guards to prevent this overlap, and the source pointer could potentially be null, which further increases the risk. The destination is not a pointer-based member, so null destination risk is low, but the overlap risk remains significant. The probability of this being a false positive is low, as the overlap was determined via dataflow analysis and no mitigating factors were detected.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory regions that may overlap, use a memory move function that is designed to handle overlapping regions safely. Replace the memory copy function with a memory move function, which guarantees correct behavior even if the source and destination overlap.\n\n```cpp\nmemmove(static_cast<void*>(&gs_OrigExtApiTable), static_cast<const void*>(pTable->amd_ext_), sizeof(AmdExtTable));\n```\n\nThis change ensures that the copy operation is safe regardless of whether the source and destination memory regions overlap.\n\n## References\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n\n___\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "1f0b9279-494c-30e3-b949-b9d828416f8e",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of insecure C library functions that can lead to various security issues such as buffer overflows, format string vulnerabilities, integer overflows, etc. In this case, the vulnerability sink is the use of the `printf` function, which is a common source of format string vulnerabilities.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to these functions. For instance, instead of using `printf`, consider using `fprintf` or `snprintf` which are safer as they allow specifying the maximum number of characters to be written to the buffer, thus preventing buffer overflow.\n\n## Source Code Fix Recommendation\n\nReplace the `printf` function with a safer alternative. For instance, if you were using `printf` like this:\n\n```cpp\nprintf(\"%s\", user_input);\n```\n\nYou could replace it with `fprintf` or `snprintf` like this:\n\n```cpp\nfprintf(stdout, \"%s\", user_input);\n```\n\nor\n\n```cpp\nchar buffer[256];\nsnprintf(buffer, sizeof(buffer), \"%s\", user_input);\n```\n\n## Library Dependencies\n\nThe code example does not appear to have any specific library dependencies beyond the standard C++ libraries.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)\n\nPlease note that these links are subject to change and may not always be accessible. Always ensure to check the validity of the links before using them."
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "7ce4f521-053e-364e-9caf-27383683feca",
+              "help": {
+                "text": "",
+                "markdown": "This finding is classified as a genuine vulnerability because it is marked as a high-confidence undefined behavior risk due to possible overlap between the source and destination memory regions in a memory copy operation. The analysis detected that the source and destination may refer to overlapping memory areas based on data flow, which can cause undefined behavior with functions like memcpy. Additionally, there is no explicit check or guard to prevent this overlap, and the source pointer could potentially be null, further increasing the risk. The destination is not a pointer-based member, which slightly reduces the risk, but the overlap concern remains. The probability of this being a false positive is low because the overlap was determined via data flow analysis and the classification and verdict both indicate a genuine issue.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory regions that may overlap, use `memmove` instead of `memcpy`. `memmove` is specifically designed to handle overlapping source and destination regions safely. Replace the original call with `memmove`:\n\n```cpp\nmemmove(static_cast<void*>(&gs_OrigCoreApiTable), static_cast<const void*>(pTable->core_), sizeof(CoreApiTable));\n```\n\nThis change ensures that the copy operation is safe even if the source and destination memory regions overlap.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "2830ec25-2f73-3092-8ecb-8f7da27c77e1",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe vulnerability in question is related to the `strlen` function in C++. The `strlen` function is used to find the length of a string. However, if the string passed to `strlen` is `NULL`, it will cause a segmentation fault, leading to a crash. This is because `strlen` tries to access memory that it shouldn't, which is undefined behavior.\n\nIn the provided code snippet, the ternary operator is used to check if `value_` is `NULL`. If `value_` is `NULL`, it returns `true`. Otherwise, it calls `strlen(value_)`. If `value_` is `NULL`, this will cause a segmentation fault.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always check if a pointer is `NULL` before passing it to `strlen`. If the pointer is `NULL`, you should handle this case appropriately, such as by returning a default value or by throwing an exception.\n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code snippet:\n\n```cpp\nvalue_ == NULL || strlen(value_) == 0 ? true : false\n```\n\nIn this version, if `value_` is `NULL`, the condition `value_ == NULL` will be `true`, and the `||` operator will short-circuit, meaning that `strlen(value_)` will not be called. This prevents the segmentation fault.\n\n## Library Dependencies\n\nThe code snippet requires the `cstring` library, which provides the `strlen` function.\n\n```cpp\n#include <cstring>\n```\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)"
               },
               "properties": {
                 "tags": [
                   "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "19ae8875-6496-3ca8-8a4b-12153147ff31",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe \"Avoid duplicating a FILE object (CERT FIO38-C)\" vulnerability in C++ programming language refers to the potential issues that can arise when a FILE object is duplicated. This can lead to data races, data inconsistency, and other unexpected behaviors. This is because the state of a FILE object is not copied when it is duplicated, and the original and duplicate FILE objects share a common file position and status indicators.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid duplicating FILE objects. Instead, create a new FILE object for each file you need to handle. If you need to share a FILE object between different parts of your program, consider using a shared pointer or a similar mechanism to ensure that the FILE object is properly managed and closed when it is no longer needed.\n\n## Source Code Fix Recommendation\n\nWithout the complete source code, it's hard to provide a specific fix. However, here is a general recommendation:\n\n```cpp\n// Incorrect way\nFILE* original = fopen(\"file.txt\", \"r\");\nFILE* duplicate = original;\n\n// Correct way\nFILE* original = fopen(\"file.txt\", \"r\");\nFILE* another = fopen(\"file.txt\", \"r\");\n```\n\nIn the correct way, instead of duplicating the FILE object, we open the file again to create a new FILE object.\n\n## Library Dependencies\n\nThe code example does not provide enough information to determine the library dependencies.\n\n## References\n\n- [CWE-675: Duplicate Operations on Resource](https://cwe.mitre.org/data/definitions/675.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS179924"
+                ]
+              }
+            },
+            {
+              "id": "a94b4f7f-91b8-3c96-8eb2-0254fda38572",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure C library functions in C++ code. These functions are often prone to buffer overflow attacks, format string vulnerabilities, or other types of security issues. In this case, the function `getenv()` is used, which can lead to security vulnerabilities. The `getenv()` function returns a pointer to a string that is associated with the matched environment variable name. This can be exploited if an attacker can control the environment in which your program runs.\n\n## Mitigation Advice\n\nAvoid using the `getenv()` function if possible. If you need to use environment variables, consider using a safer alternative that does not allow for buffer overflows or other types of attacks. Always validate and sanitize input, even if it comes from an environment variable.\n\n## Source Code Fix Recommendation\n\nInstead of using `getenv()`, consider using a safer alternative. For example, you can use the `std::getenv()` function in C++, which is safer than the C `getenv()` function. Here is an example of how to use it:\n\n```cpp\n#include <cstdlib>\n\nconst char* value = std::getenv(\"name\");\nif (value == nullptr) {\n    // handle error\n} else {\n    value_ = value;\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n- `<cstdlib>`\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "4383010f-f8e0-36bf-94b5-f81f0178f410",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of insecure C library functions that can lead to various security issues such as buffer overflows, format string vulnerabilities, or integer overflows. In the provided code snippet, the function `fopen` is used, which can lead to vulnerabilities if the filename is manipulated by an attacker.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to these functions. In the case of file operations, C++ provides a safer alternative in the form of file stream objects (fstream). \n\n## Source Code Fix Recommendation\n\nReplace the `fopen` function with the `ofstream` object from the `<fstream>` library. Here is how you can do it:\n\n```cpp\n#include <fstream>\n\nstd::ofstream stream(filename.c_str());\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<fstream>`: This library provides facilities for file-based input and output.\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)\n\nPlease note that the links provided are active and accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "32642905-da23-3172-9e7b-379869a79cfc",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe \"Prohibited C Function Identified\" vulnerability refers to the use of certain C functions that are considered unsafe due to their potential to cause buffer overflows, format string vulnerabilities, or other types of security issues. In this case, the function `atoll()` is used, which converts a string to a long long integer. This function does not perform any error checking, and if the input string is not a valid number, it can lead to undefined behavior.\n\n## Mitigation Advice\n\nAvoid using functions that do not perform error checking or can lead to undefined behavior. Instead, use safer alternatives that are available. In the case of `atoll()`, a safer alternative would be `strtol()` or `strtoll()`, which provide error checking.\n\n## Source Code Fix Recommendation\n\nReplace the `atoll()` function with `strtoll()`. Here is how you can do it:\n\n```cpp\nchar *end;\nlong long int sessionId = strtoll(argv[0], &end, 10);\nif (end == argv[0]) {\n    // handle error: no digits were found\n}\n```\n\nIn this code, `strtoll()` will set `end` to point to the first invalid character in the string. If no digits were found, `end` will be equal to `argv[0]`, and you can handle the error accordingly.\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n```cpp\n#include <stdlib.h>\n```\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
                 ]
               }
             }
@@ -107,359 +215,11 @@
       "language": "en-US",
       "results": [
         {
-          "ruleId": "glog-e3a5b369-5ef2-4ae3-89fd-cad7a29f4d21",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Detected Vulnerability in C Function (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/rtg_tracer.cpp"
-                },
-                "region": {
-                  "startLine": 698,
-                  "startColumn": 4,
-                  "endLine": 700,
-                  "endColumn": 31,
-                  "charOffset": 28156,
-                  "charLength": 132,
-                  "snippet": {
-                    "text": "memcpy(static_cast<void*>(&gs_OrigCoreApiTable),\n           static_cast<const void*>(pTable->core_),\n           sizeof(CoreApiTable)",
-                    "rendered": {
-                      "text": "memcpy(static_cast<void*>(&gs_OrigCoreApiTable),\n           static_cast<const void*>(pTable->core_),\n           sizeof(CoreApiTable)",
-                      "markdown": "`memcpy(static_cast<void*>(&gs_OrigCoreApiTable),\n           static_cast<const void*>(pTable->core_),\n           sizeof(CoreApiTable)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/rtg_tracer.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 28156,
-                        "charLength": 132
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(static_cast<void*>(&gs_OrigCoreApiTable), <size of static_cast<void*>(&gs_OrigCoreApiTable)>, \n           static_cast<const void*>(pTable->core_), \n           sizeof(CoreApiTable)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-b5430737-c9d3-4623-8d68-66a00cb254cf",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Detected Vulnerability in C Function (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/rtg_tracer.cpp"
-                },
-                "region": {
-                  "startLine": 736,
-                  "startColumn": 4,
-                  "endLine": 738,
-                  "endColumn": 31,
-                  "charOffset": 29339,
-                  "charLength": 132,
-                  "snippet": {
-                    "text": "memcpy(static_cast<void*>(pTable->core_),\n           static_cast<const void*>(&gs_OrigCoreApiTable),\n           sizeof(CoreApiTable)",
-                    "rendered": {
-                      "text": "memcpy(static_cast<void*>(pTable->core_),\n           static_cast<const void*>(&gs_OrigCoreApiTable),\n           sizeof(CoreApiTable)",
-                      "markdown": "`memcpy(static_cast<void*>(pTable->core_),\n           static_cast<const void*>(&gs_OrigCoreApiTable),\n           sizeof(CoreApiTable)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/rtg_tracer.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 29339,
-                        "charLength": 132
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(static_cast<void*>(pTable->core_), <size of static_cast<void*>(pTable->core_)>, \n           static_cast<const void*>(&gs_OrigCoreApiTable), \n           sizeof(CoreApiTable)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-fa986b7c-0949-46cb-ace6-b4b7ff96ec0d",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Detected Vulnerability in C Function (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/rtg_tracer.cpp"
-                },
-                "region": {
-                  "startLine": 703,
-                  "startColumn": 4,
-                  "endLine": 705,
-                  "endColumn": 30,
-                  "charOffset": 28336,
-                  "charLength": 133,
-                  "snippet": {
-                    "text": "memcpy(static_cast<void*>(&gs_OrigExtApiTable),\n           static_cast<const void*>(pTable->amd_ext_),\n           sizeof(AmdExtTable)",
-                    "rendered": {
-                      "text": "memcpy(static_cast<void*>(&gs_OrigExtApiTable),\n           static_cast<const void*>(pTable->amd_ext_),\n           sizeof(AmdExtTable)",
-                      "markdown": "`memcpy(static_cast<void*>(&gs_OrigExtApiTable),\n           static_cast<const void*>(pTable->amd_ext_),\n           sizeof(AmdExtTable)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/rtg_tracer.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 28336,
-                        "charLength": 133
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(static_cast<void*>(&gs_OrigExtApiTable), <size of static_cast<void*>(&gs_OrigExtApiTable)>, \n           static_cast<const void*>(pTable->amd_ext_), \n           sizeof(AmdExtTable)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-21c076fc-d19f-4994-9585-a6e004612fd5",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Detected Vulnerability in C Function (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/rtg_tracer.cpp"
-                },
-                "region": {
-                  "startLine": 741,
-                  "startColumn": 4,
-                  "endLine": 743,
-                  "endColumn": 30,
-                  "charOffset": 29522,
-                  "charLength": 133,
-                  "snippet": {
-                    "text": "memcpy(static_cast<void*>(pTable->amd_ext_),\n           static_cast<const void*>(&gs_OrigExtApiTable),\n           sizeof(AmdExtTable)",
-                    "rendered": {
-                      "text": "memcpy(static_cast<void*>(pTable->amd_ext_),\n           static_cast<const void*>(&gs_OrigExtApiTable),\n           sizeof(AmdExtTable)",
-                      "markdown": "`memcpy(static_cast<void*>(pTable->amd_ext_),\n           static_cast<const void*>(&gs_OrigExtApiTable),\n           sizeof(AmdExtTable)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/rtg_tracer.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 29522,
-                        "charLength": 133
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(static_cast<void*>(pTable->amd_ext_), <size of static_cast<void*>(pTable->amd_ext_)>, \n           static_cast<const void*>(&gs_OrigExtApiTable), \n           sizeof(AmdExtTable)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-3584508d-75d4-497b-bbf8-efaa8239a840",
+          "ruleId": "2fe5f357-7b6d-3ed6-9f3d-66ea1e135d6e",
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "\"Detected Use of Prohibited C Function (strncpy)\""
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/rtg_out_rpd.cpp"
-                },
-                "region": {
-                  "startLine": 175,
-                  "startColumn": 4,
-                  "endLine": 175,
-                  "endColumn": 41,
-                  "charOffset": 5639,
-                  "charLength": 37,
-                  "snippet": {
-                    "text": "strncpy(row.completionSignal, \"\", 18)",
-                    "rendered": {
-                      "text": "strncpy(row.completionSignal, \"\", 18)",
-                      "markdown": "`strncpy(row.completionSignal, \"\", 18)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "strncpy is dangerous, as if the source contains 'n' or more characters, it will not null terminate the destination."
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/rtg_out_rpd.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 5639,
-                        "charLength": 37
-                      },
-                      "insertedContent": {
-                        "text": "strcpy_s(row.completionSignal,  18,  \"\")"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "description": {
-                "text": "strncpy is dangerous, as if the source contains 'n' or more characters, it will not null terminate the destination."
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/rtg_out_rpd.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 5639,
-                        "charLength": 37
-                      },
-                      "insertedContent": {
-                        "text": "strlcpy(row.completionSignal,  \"\",  18)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Important",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-64cdca36-20d8-4d58-aae4-48a53f791c9a",
-          "kind": "fail",
-          "level": "error",
-          "message": {
-            "text": "\"Detected Use of Prohibited C Function (strncpy)\""
+            "text": "Banned C function detected (strncpy)"
           },
           "locations": [
             {
@@ -543,7 +303,555 @@
           }
         },
         {
-          "ruleId": "glog-b48f06b5-1c65-4c50-aa4d-700e9ad5d7cc",
+          "ruleId": "339dc93b-22b6-38bb-a441-641574054645",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_tracer.cpp"
+                },
+                "region": {
+                  "startLine": 3005,
+                  "startColumn": 24,
+                  "endLine": 3005,
+                  "endColumn": 28,
+                  "charOffset": 133805,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "atoi",
+                    "rendered": {
+                      "text": "atoi",
+                      "markdown": "`atoi`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "dd5dbf07-c85d-347c-8113-a4aea44cde2a",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Banned C function detected (strncpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_out_rpd.cpp"
+                },
+                "region": {
+                  "startLine": 175,
+                  "startColumn": 4,
+                  "endLine": 175,
+                  "endColumn": 41,
+                  "charOffset": 5639,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "strncpy(row.completionSignal, \"\", 18)",
+                    "rendered": {
+                      "text": "strncpy(row.completionSignal, \"\", 18)",
+                      "markdown": "`strncpy(row.completionSignal, \"\", 18)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "strncpy is dangerous, as if the source contains 'n' or more characters, it will not null terminate the destination."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/rtg_out_rpd.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 5639,
+                        "charLength": 37
+                      },
+                      "insertedContent": {
+                        "text": "strcpy_s(row.completionSignal,  18,  \"\")"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "strncpy is dangerous, as if the source contains 'n' or more characters, it will not null terminate the destination."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/rtg_out_rpd.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 5639,
+                        "charLength": 37
+                      },
+                      "insertedContent": {
+                        "text": "strlcpy(row.completionSignal,  \"\",  18)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Important",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "955b70d2-da4d-3915-b02d-4b8dbfc5e964",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_out_printf_lockless.cpp"
+                },
+                "region": {
+                  "startLine": 78,
+                  "startColumn": 17,
+                  "endLine": 78,
+                  "endColumn": 22,
+                  "charOffset": 2097,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "fopen",
+                    "rendered": {
+                      "text": "fopen",
+                      "markdown": "`fopen`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "bd605a99-63fa-3158-a494-038ddb6a732f",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_tracer.cpp"
+                },
+                "region": {
+                  "startLine": 2886,
+                  "startColumn": 25,
+                  "endLine": 2886,
+                  "endColumn": 30,
+                  "charOffset": 129306,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "fopen",
+                    "rendered": {
+                      "text": "fopen",
+                      "markdown": "`fopen`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "09bc0258-ed3e-3ac2-8aeb-bd14ccce0b97",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_tracer.cpp"
+                },
+                "region": {
+                  "startLine": 736,
+                  "startColumn": 4,
+                  "endLine": 738,
+                  "endColumn": 31,
+                  "charOffset": 29339,
+                  "charLength": 132,
+                  "snippet": {
+                    "text": "memcpy(static_cast<void*>(pTable->core_),\n           static_cast<const void*>(&gs_OrigCoreApiTable),\n           sizeof(CoreApiTable)",
+                    "rendered": {
+                      "text": "memcpy(static_cast<void*>(pTable->core_),\n           static_cast<const void*>(&gs_OrigCoreApiTable),\n           sizeof(CoreApiTable)",
+                      "markdown": "`memcpy(static_cast<void*>(pTable->core_),\n           static_cast<const void*>(&gs_OrigCoreApiTable),\n           sizeof(CoreApiTable)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/rtg_tracer.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 29339,
+                        "charLength": 132
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(static_cast<void*>(pTable->core_), <size of static_cast<void*>(pTable->core_)>, \n           static_cast<const void*>(&gs_OrigCoreApiTable), \n           sizeof(CoreApiTable)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "4f5d7032-13c7-3697-8516-9f136d0e255b",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_tracer.cpp"
+                },
+                "region": {
+                  "startLine": 2602,
+                  "startColumn": 4,
+                  "endLine": 2602,
+                  "endColumn": 11,
+                  "charOffset": 119167,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "fprintf",
+                    "rendered": {
+                      "text": "fprintf",
+                      "markdown": "`fprintf`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "2bec8f8b-0844-3edb-8e48-8797c81cb5c7",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_tracer.cpp"
+                },
+                "region": {
+                  "startLine": 741,
+                  "startColumn": 4,
+                  "endLine": 743,
+                  "endColumn": 30,
+                  "charOffset": 29522,
+                  "charLength": 133,
+                  "snippet": {
+                    "text": "memcpy(static_cast<void*>(pTable->amd_ext_),\n           static_cast<const void*>(&gs_OrigExtApiTable),\n           sizeof(AmdExtTable)",
+                    "rendered": {
+                      "text": "memcpy(static_cast<void*>(pTable->amd_ext_),\n           static_cast<const void*>(&gs_OrigExtApiTable),\n           sizeof(AmdExtTable)",
+                      "markdown": "`memcpy(static_cast<void*>(pTable->amd_ext_),\n           static_cast<const void*>(&gs_OrigExtApiTable),\n           sizeof(AmdExtTable)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/rtg_tracer.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 29522,
+                        "charLength": 133
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(static_cast<void*>(pTable->amd_ext_), <size of static_cast<void*>(pTable->amd_ext_)>, \n           static_cast<const void*>(&gs_OrigExtApiTable), \n           sizeof(AmdExtTable)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "59a7d5fa-45f7-3370-a50f-c9610669cbc1",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_tracer.cpp"
+                },
+                "region": {
+                  "startLine": 703,
+                  "startColumn": 4,
+                  "endLine": 705,
+                  "endColumn": 30,
+                  "charOffset": 28336,
+                  "charLength": 133,
+                  "snippet": {
+                    "text": "memcpy(static_cast<void*>(&gs_OrigExtApiTable),\n           static_cast<const void*>(pTable->amd_ext_),\n           sizeof(AmdExtTable)",
+                    "rendered": {
+                      "text": "memcpy(static_cast<void*>(&gs_OrigExtApiTable),\n           static_cast<const void*>(pTable->amd_ext_),\n           sizeof(AmdExtTable)",
+                      "markdown": "`memcpy(static_cast<void*>(&gs_OrigExtApiTable),\n           static_cast<const void*>(pTable->amd_ext_),\n           sizeof(AmdExtTable)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/rtg_tracer.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 28336,
+                        "charLength": 133
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(static_cast<void*>(&gs_OrigExtApiTable), <size of static_cast<void*>(&gs_OrigExtApiTable)>, \n           static_cast<const void*>(pTable->amd_ext_), \n           sizeof(AmdExtTable)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "1f0b9279-494c-30e3-b949-b9d828416f8e",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flags.h"
+                },
+                "region": {
+                  "startLine": 80,
+                  "startColumn": 49,
+                  "endLine": 80,
+                  "endColumn": 55,
+                  "charOffset": 3469,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "printf",
+                    "rendered": {
+                      "text": "printf",
+                      "markdown": "`printf`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "7ce4f521-053e-364e-9caf-27383683feca",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_tracer.cpp"
+                },
+                "region": {
+                  "startLine": 698,
+                  "startColumn": 4,
+                  "endLine": 700,
+                  "endColumn": 31,
+                  "charOffset": 28156,
+                  "charLength": 132,
+                  "snippet": {
+                    "text": "memcpy(static_cast<void*>(&gs_OrigCoreApiTable),\n           static_cast<const void*>(pTable->core_),\n           sizeof(CoreApiTable)",
+                    "rendered": {
+                      "text": "memcpy(static_cast<void*>(&gs_OrigCoreApiTable),\n           static_cast<const void*>(pTable->core_),\n           sizeof(CoreApiTable)",
+                      "markdown": "`memcpy(static_cast<void*>(&gs_OrigCoreApiTable),\n           static_cast<const void*>(pTable->core_),\n           sizeof(CoreApiTable)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/rtg_tracer.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 28156,
+                        "charLength": 132
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(static_cast<void*>(&gs_OrigCoreApiTable), <size of static_cast<void*>(&gs_OrigCoreApiTable)>, \n           static_cast<const void*>(pTable->core_), \n           sizeof(CoreApiTable)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "2830ec25-2f73-3092-8ecb-8f7da27c77e1",
           "kind": "fail",
           "level": "note",
           "message": {
@@ -627,6 +935,167 @@
             "DevSkimConfidence": "High",
             "tags": [
               "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "19ae8875-6496-3ca8-8a4b-12153147ff31",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Avoid duplicating a FILE object (CERT FIO38-C)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_tracer.cpp"
+                },
+                "region": {
+                  "startLine": 565,
+                  "startColumn": 26,
+                  "endLine": 567,
+                  "endColumn": 25,
+                  "charOffset": 22987,
+                  "charLength": 139,
+                  "snippet": {
+                    "text": "FILE mode we use the raw ticks from the hsa signal, not the clock-translated ticks\n            if (HCC_PROFILE) {\n                start = *",
+                    "rendered": {
+                      "text": "FILE mode we use the raw ticks from the hsa signal, not the clock-translated ticks\n            if (HCC_PROFILE) {\n                start = *",
+                      "markdown": "`FILE mode we use the raw ticks from the hsa signal, not the clock-translated ticks\n            if (HCC_PROFILE) {\n                start = *`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Important",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "CERT.FIO38-C",
+              "C.DangerousFunctionCall"
+            ]
+          }
+        },
+        {
+          "ruleId": "a94b4f7f-91b8-3c96-8eb2-0254fda38572",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flags.h"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 17,
+                  "endLine": 30,
+                  "endColumn": 23,
+                  "charOffset": 905,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "getenv",
+                    "rendered": {
+                      "text": "getenv",
+                      "markdown": "`getenv`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "4383010f-f8e0-36bf-94b5-f81f0178f410",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/rtg_out_printf.cpp"
+                },
+                "region": {
+                  "startLine": 123,
+                  "startColumn": 13,
+                  "endLine": 123,
+                  "endColumn": 18,
+                  "charOffset": 3111,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "fopen",
+                    "rendered": {
+                      "text": "fopen",
+                      "markdown": "`fopen`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "32642905-da23-3172-9e7b-379869a79cfc",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "\"Prohibited C Function Identified\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/MetadataTable.cpp"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 16,
+                  "endLine": 33,
+                  "endColumn": 21,
+                  "charOffset": 1492,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "atoll",
+                    "rendered": {
+                      "text": "atoll",
+                      "markdown": "`atoll`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
             ]
           }
         }
